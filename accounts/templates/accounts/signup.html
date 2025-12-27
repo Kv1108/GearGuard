@@ -1,34 +1,90 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
+<style>
+    /* Style the Django-generated inputs */
+    input[type="text"], 
+    input[type="password"], 
+    input[type="email"], 
+    select, 
+    textarea {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #1a1f2b; /* Dark theme background */
+        border: 1px solid #2d3748;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 1rem;
+        margin-top: 0.25rem;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: var(--accent, #6366f1);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Remove bullets and padding from Django error lists */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+        color: #ff4d4d; /* Matches your danger color */
+    }
+
+    .errorlist li {
+        font-size: 0.875rem;
+        margin-bottom: 0.2rem;
+    }
+
+    /* Help text styling */
+    .help-text {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+    }
+</style>
+
 <div style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
-    <div class="card" style="width: 100%; max-width: 400px; padding: 2.5rem;">
-        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent);">Sign Up</h2>
+    <div class="card" style="width: 100%; max-width: 400px; padding: 2.5rem; background: #242b3d; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent, #7c4dff);">Sign Up</h2>
 
         <form method="post">
             {% csrf_token %}
+            
             {% for field in form %}
             <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">{{ field.label
-                    }}</label>
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary, #a0aec0);">
+                    {{ field.label }}
+                </label>
+
                 {{ field }}
+
                 {% if field.errors %}
-                <div style="color: var(--danger); font-size: 0.875rem;">{{ field.errors }}</div>
+                    <div class="error-container">
+                        {{ field.errors }}
+                    </div>
                 {% endif %}
+
                 {% if field.help_text %}
-                <div style="color: var(--text-secondary); font-size: 0.75rem; opacity: 0.7;">{{ field.help_text }}</div>
+                    <div class="help-text">
+                        {{ field.help_text|safe }}
+                    </div>
                 {% endif %}
             </div>
             {% endfor %}
 
             <button type="submit" class="btn btn-primary"
-                style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 1rem;">
+                style="width: 100%; justify-content: center; padding: 0.75rem; font-size: 1rem; cursor: pointer; border: none; border-radius: 8px; background-color: #6366f1; color: white; font-weight: 600;">
                 Create Account
             </button>
         </form>
 
-        <div style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary);">
-            Already have an account? <a href="{% url 'login' %}" style="color: var(--accent);">Login</a>
+        <div style="text-align: center; margin-top: 1.5rem; color: var(--text-secondary, #a0aec0);">
+            Already have an account? <a href="{% url 'login' %}" style="color: var(--accent, #7c4dff); text-decoration: none;">Login</a>
         </div>
     </div>
 </div>
