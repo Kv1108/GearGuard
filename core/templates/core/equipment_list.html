@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h1>Equipment Management</h1>
+        <p style="color: var(--text-secondary)">Track and manage your assets</p>
+    </div>
+    <a href="{% url 'equipment_create' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Equipment
+    </a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem;">
+    <form method="get" style="display: flex; gap: 1rem;">
+        <input type="text" name="q" placeholder="Search by name, serial number or department..."
+            value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Serial #</th>
+                <th>Category</th>
+                <th>Dept</th>
+                <th>Team</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in equipments %}
+            <tr>
+                <td>
+                    <div style="font-weight: 500;">{{ item.name }}</div>
+                </td>
+                <td>{{ item.serial_number }}</td>
+                <td>{{ item.category }}</td>
+                <td>{{ item.department }}</td>
+                <td>{{ item.maintenance_team }}</td>
+                <td>
+                    {% if item.is_scrapped %}
+                    <span class="badge badge-scrap">Scrapped</span>
+                    {% else %}
+                    <span class="badge badge-repaired">Active</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'equipment_detail' item.pk %}" class="btn" style="color: var(--accent);">
+                        Details <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-secondary);">No equipment found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

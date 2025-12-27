@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GearGuard | Maintenance</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+
+    <!-- HTMX / Sortable -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-gears"></i> GearGuard
+            </div>
+
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url 'dashboard' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                            <i class="fa-solid fa-chart-line"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'equipment_list' %}"
+                            class="nav-link {% if 'equipment' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-industry"></i> Equipment
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'request_list' %}"
+                            class="nav-link {% if 'requests' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-screwdriver-wrench"></i> Maintenance
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'calendar' %}"
+                            class="nav-link {% if 'calendar' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-calendar"></i> Calendar
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link">
+                            <i class="fa-solid fa-users"></i> Teams
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

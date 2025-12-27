@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1>{{ title }}</h1>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">{{ field.label
+                    }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: var(--danger); font-size: 0.875rem;">{{ field.errors }}</div>
+                {% endif %}
+                {% if field.help_text %}
+                <div style="color: var(--text-secondary); font-size: 0.75rem;">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

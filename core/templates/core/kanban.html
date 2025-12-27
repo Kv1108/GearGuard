@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h1>Maintenance Board</h1>
+        <p style="color: var(--text-secondary)">Drag and drop cards to change status</p>
+    </div>
+    <a href="{% url 'request_create' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> New Request
+    </a>
+</div>
+
+<div class="kanban-board">
+    {% for stage_name, requests, status_code in stages %}
+    <div class="kanban-column" id="{{ status_code }}">
+        <div style="font-weight: 600; color: var(--text-secondary); text-transform: uppercase; font-size: 0.875rem;">
+            {{ stage_name }} ({{ requests.count }})
+        </div>
+
+        {% for req in requests %}
+        <div class="kanban-card" data-id="{{ req.id }}" draggable="true">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <span
+                    class="badge {% if req.request_type == 'Preventive' %}badge-progress{% else %}badge-scrap{% endif %}">
+                    {{ req.request_type }}
+                </span>
+                <a href="{% url 'request_update' req.pk %}" style="color: var(--text-secondary);"><i
+                        class="fa-solid fa-pen"></i></a>
+            </div>
+            <div style="font-weight: 500; margin-bottom: 0.25rem;">{{ req.subject }}</div>
+            <div style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                <i class="fa-solid fa-server"></i> {{ req.equipment.name }}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                    {{ req.assigned_to|default:"Unassigned" }}
+                </div>
+                <!-- Avatar placeholder -->
+                <div style="width: 24px; height: 24px; background: var(--border); border-radius: 50%;"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+{% csrf_token %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const columns = document.querySelectorAll('.kanban-column');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        columns.forEach(column => {
+            new Sortable(column, {
+                group: 'kanban',
+                animation: 150,
+                onEnd: function (evt) {
+                    const itemEl = evt.item;
+                    const newStage = evt.to.id; // The ID of the column is the status code
+                    const requestId = itemEl.getAttribute('data-id');
+
+                    // Call API to update
+                    fetch(`/api/requests/${requestId}/stage/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({
+                            stage: newStage
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            console.log('Stage updated');
+                        } else {
+                            console.error('Failed to update stage');
+                            // Revert move if failed (optional, but good practice)
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

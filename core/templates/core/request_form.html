@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div style="margin-bottom: 2rem;">
+        <h1>Create/Update Request</h1>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            <!-- Manually rendering for more control over ID/classes -->
+            {% for field in form %}
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">{{ field.label
+                    }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div style="color: var(--danger); font-size: 0.875rem;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div id="equipment-info"
+                style="display: none; background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <div style="font-size: 0.875rem; color: var(--accent);">
+                    <i class="fa-solid fa-info-circle"></i>
+                    Auto-assigning to team: <strong id="team-name">--</strong>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Request</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const equipmentSelect = document.querySelector('select[name="equipment"]');
+        const infoBox = document.getElementById('equipment-info');
+        const teamNameSpan = document.getElementById('team-name');
+
+        function fetchDetails() {
+            const equipmentId = equipmentSelect.value;
+            if (equipmentId) {
+                fetch(`/api/equipment/${equipmentId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.team_name) {
+                            teamNameSpan.textContent = data.team_name;
+                            infoBox.style.display = 'block';
+                            // Logic to auto-assign in a hidden field if needed, 
+                            // but usually backend can handle it or we show it to user
+                        }
+                    });
+            } else {
+                infoBox.style.display = 'none';
+            }
+        }
+
+        equipmentSelect.addEventListener('change', fetchDetails);
+
+        // Initial check
+        if (equipmentSelect.value) fetchDetails();
+    });
+</script>
+{% endblock %}

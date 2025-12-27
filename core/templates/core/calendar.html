@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h1>Maintenance Calendar</h1>
+        <p style="color: var(--text-secondary)">Scheduled preventive maintenance</p>
+    </div>
+    <a href="{% url 'request_create' %}?type=Preventive" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Schedule Maintenance
+    </a>
+</div>
+
+<div class="card">
+    <div id='calendar'></div>
+</div>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek'
+            },
+            height: 650,
+            events: '/api/events/',
+            dateClick: function (info) {
+                // Redirect to create form with date pre-filled
+                window.location.href = `{% url 'request_create' %}?type=Preventive&date=${info.dateStr}`;
+            }
+        });
+        calendar.render();
+    });
+</script>
+{% endblock %}

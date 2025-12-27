@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <a href="{% url 'equipment_list' %}" style="color: var(--text-secondary);"><i class="fa-solid fa-arrow-left"></i>
+        Back to List</a>
+</div>
+
+<div class="header-actions">
+    <div>
+        <h1>{{ equipment.name }}</h1>
+        <div style="color: var(--text-secondary); display: flex; gap: 1rem;">
+            <span><i class="fa-solid fa-barcode"></i> {{ equipment.serial_number }}</span>
+            <span><i class="fa-solid fa-building"></i> {{ equipment.department }}</span>
+        </div>
+    </div>
+
+    <!-- Smart Button -->
+    <a href="{% url 'request_list' %}?q={{ equipment.name }}" class="smart-button">
+        <span class="count">{{ request_count }}</span>
+        <span style="font-size: 0.75rem;">Requests</span>
+    </a>
+</div>
+
+<div class="grid grid-cols-2">
+    <!-- Info Card -->
+    <div class="card">
+        <h3 style="margin-top: 0;">General Information</h3>
+        <div class="grid grid-cols-2">
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Category</label>
+                <div>{{ equipment.category }}</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Location</label>
+                <div>{{ equipment.location }}</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Assigned Team</label>
+                <div style="color: var(--accent);">{{ equipment.maintenance_team }}</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Owner</label>
+                <div>{{ equipment.owner|default:"--" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warranty Card -->
+    <div class="card">
+        <h3 style="margin-top: 0;">Warranty & Status</h3>
+        <div class="grid grid-cols-2">
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Purchase Date</label>
+                <div>{{ equipment.purchase_date|date:"M d, Y" }}</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Warranty Expiry</label>
+                <div>{{ equipment.warranty_expiry|date:"M d, Y" }}</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.875rem;">Status</label>
+                <div>
+                    {% if equipment.is_scrapped %}
+                    <span class="badge badge-scrap">Scrapped</span>
+                    {% else %}
+                    <span class="badge badge-repaired">Active</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
