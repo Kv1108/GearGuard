@@ -1,67 +1,156 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
+<div style="max-width: 800px; margin: 0 auto;">
     <div style="margin-bottom: 2rem;">
         <h1>Create/Update Request</h1>
     </div>
 
-    <div class="card">
-        <form method="post">
+    <!-- Main Request Form -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <form method="post" id="requestForm">
             {% csrf_token %}
-            <!-- Manually rendering for more control over ID/classes -->
-            {% for field in form %}
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">{{ field.label
-                    }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div style="color: var(--danger); font-size: 0.875rem;">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-            {% endfor %}
+            <input type="hidden" name="submit_request" value="1">
 
-            <div id="equipment-info"
-                style="display: none; background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
-                <div style="font-size: 0.875rem; color: var(--accent);">
-                    <i class="fa-solid fa-info-circle"></i>
-                    Auto-assigning to team: <strong id="team-name">--</strong>
+            <div class="grid grid-cols-2">
+                <!-- Subject & Type -->
+                <div style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Subject</label>
+                    {{ form.subject }}
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Request
+                        Type</label>
+                    {{ form.request_type }}
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Priority</label>
+                    {{ form.priority }}
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Save Request</button>
+            <div style="margin: 1.5rem 0; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <!-- Toggle between Equipment and Work Center -->
+                <div style="margin-bottom: 1rem;">
+                    <label style="color: var(--text-secondary);">Maintenance For:</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <label>
+                            <input type="radio" name="target_type" value="equipment" checked
+                                onclick="toggleTarget('equipment')"> Equipment
+                        </label>
+                        <label>
+                            <input type="radio" name="target_type" value="work_center"
+                                onclick="toggleTarget('work_center')"> Work Center
+                        </label>
+                    </div>
+                </div>
+
+                <div id="target-equipment">
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Equipment</label>
+                    {{ form.equipment }}
+                </div>
+
+                <div id="target-workcenter" style="display: none;">
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Work
+                        Center</label>
+                    {{ form.work_center }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Stage</label>
+                    {{ form.stage }}
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Scheduled
+                        Date</label>
+                    {{ form.scheduled_date }}
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Assigned
+                        To</label>
+                    {{ form.assigned_to }}
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Duration
+                        (Hours)</label>
+                    {{ form.duration }}
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary);">Instructions</label>
+                {{ form.instructions }}
+            </div>
+
+            {% if form.errors %}
+            <div
+                style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                {{ form.errors }}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Save Request</button>
         </form>
     </div>
+
+    <!-- Maintenance Logs (Only for Updates) -->
+    {% if request_obj %}
+    <div class="card">
+        <h3>Maintenance Logs & Comments</h3>
+
+        <form method="post" style="margin-bottom: 2rem;">
+            {% csrf_token %}
+            <input type="hidden" name="submit_log" value="1">
+            {{ log_form.comment }}
+            <button type="submit" class="btn btn-primary" style="margin-top: 0.5rem;">Add Note</button>
+        </form>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for log in logs %}
+            <div
+                style="background: var(--bg-dark); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+                <div
+                    style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-secondary);">
+                    <strong>{{ log.created_by.get_full_name|default:log.created_by.username }}</strong>
+                    <span>{{ log.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                <div>{{ log.comment }}</div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; color: var(--text-secondary);">No logs yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const equipmentSelect = document.querySelector('select[name="equipment"]');
-        const infoBox = document.getElementById('equipment-info');
-        const teamNameSpan = document.getElementById('team-name');
+    function toggleTarget(type) {
+        const eqDiv = document.getElementById('target-equipment');
+        const wcDiv = document.getElementById('target-workcenter');
 
-        function fetchDetails() {
-            const equipmentId = equipmentSelect.value;
-            if (equipmentId) {
-                fetch(`/api/equipment/${equipmentId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.team_name) {
-                            teamNameSpan.textContent = data.team_name;
-                            infoBox.style.display = 'block';
-                            // Logic to auto-assign in a hidden field if needed, 
-                            // but usually backend can handle it or we show it to user
-                        }
-                    });
-            } else {
-                infoBox.style.display = 'none';
-            }
+        if (type === 'equipment') {
+            eqDiv.style.display = 'block';
+            wcDiv.style.display = 'none';
+        } else {
+            eqDiv.style.display = 'none';
+            wcDiv.style.display = 'block';
         }
+    }
 
-        equipmentSelect.addEventListener('change', fetchDetails);
-
-        // Initial check
-        if (equipmentSelect.value) fetchDetails();
+    // Initialize state
+    document.addEventListener('DOMContentLoaded', function () {
+        // If WorkCenter is selected in Django form, switch view
+        const wcSelect = document.querySelector('select[name="work_center"]');
+        if (wcSelect && wcSelect.value) {
+            document.querySelector('input[value="work_center"]').checked = true;
+            toggleTarget('work_center');
+        }
     });
 </script>
 {% endblock %}

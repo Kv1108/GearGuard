@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h1>Work Centers</h1>
+        <p style="color: var(--text-secondary)">Manage production units and cost centers</p>
+    </div>
+    <a href="{% url 'work_center_create' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Work Center
+    </a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Efficiency</th>
+                <th>OEE Target</th>
+                <th>Cost/Hr</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wc in work_centers %}
+            <tr>
+                <td>{{ wc.code }}</td>
+                <td>
+                    <div style="font-weight: 500;">{{ wc.name }}</div>
+                </td>
+                <td>{{ wc.efficiency }}%</td>
+                <td>{{ wc.oee_target }}%</td>
+                <td>${{ wc.cost_per_hour }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: var(--text-secondary);">No work centers found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h1>Equipment Categories</h1>
+        <p style="color: var(--text-secondary)">Classify your assets</p>
+    </div>
+    <a href="{% url 'category_create' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> Add Category
+    </a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Responsible Person</th>
+                <th>Equipment Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categories %}
+            <tr>
+                <td>
+                    <div style="font-weight: 500;">{{ cat.name }}</div>
+                </td>
+                <td>{{ cat.responsible_user.get_full_name|default:cat.responsible_user.username|default:"-" }}</td>
+                <td>{{ cat.equipment.count }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center; color: var(--text-secondary);">No categories found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

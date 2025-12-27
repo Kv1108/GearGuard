@@ -32,6 +32,7 @@
 
             <nav>
                 <ul>
+                    {% if user.is_authenticated %}
                     <li>
                         <a href="{% url 'dashboard' %}"
                             class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
@@ -57,12 +58,47 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link">
-                            <i class="fa-solid fa-users"></i> Teams
+                        <a href="{% url 'work_center_list' %}"
+                            class="nav-link {% if 'work-center' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-industry"></i> Work Centers
                         </a>
                     </li>
+                    <li>
+                        <a href="{% url 'category_list' %}"
+                            class="nav-link {% if 'category' in request.path %}active{% endif %}">
+                            <i class="fa-solid fa-tags"></i> Categories
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
             </nav>
+
+            <div style="margin-top: auto; border-top: 1px solid var(--border); padding-top: 1rem;">
+                {% if user.is_authenticated %}
+                <div
+                    style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; color: var(--text-secondary);">
+                    <div
+                        style="width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                        {{ user.username|make_list|first|upper }}
+                    </div>
+                    <div style="flex: 1; overflow: hidden; text-overflow: ellipsis;">
+                        {{ user.username }}
+                    </div>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            style="background: none; border: none; color: var(--text-secondary); cursor: pointer;"
+                            title="Logout">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </form>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="nav-link">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </a>
+                {% endif %}
+            </div>
         </aside>
 
         <main class="main-content">

@@ -11,35 +11,93 @@
     </a>
 </div>
 
-<div class="grid grid-cols-3">
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div style="font-size: 0.875rem; color: var(--text-secondary);">Total Equipment</div>
-                <div style="font-size: 2rem; font-weight: 700;">{{ total_equipment }}</div>
-            </div>
-            <i class="fa-solid fa-server" style="font-size: 2rem; color: var(--accent);"></i>
-        </div>
-    </div>
-    
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div style="font-size: 0.875rem; color: var(--text-secondary);">Open Requests</div>
-                <div style="font-size: 2rem; font-weight: 700;">{{ open_requests }}</div>
-            </div>
-            <i class="fa-solid fa-clipboard-list" style="font-size: 2rem; color: var(--warning);"></i>
-        </div>
-    </div>
-    
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <div style="font-size: 0.875rem; color: var(--text-secondary);">Scrapped</div>
-                <div style="font-size: 2rem; font-weight: 700;">{{ scrapped_equipment }}</div>
-            </div>
-            <i class="fa-solid fa-ban" style="font-size: 2rem; color: var(--danger);"></i>
-        </div>
+<!-- Search Bar Placeholder as per wireframe -->
+<div class="card" style="margin-bottom: 2rem; padding: 0.75rem;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" placeholder="Search..."
+            style="border: none; background: transparent; padding: 0; margin: 0; width: 100%;">
     </div>
 </div>
-{% endblock %}
+
+<div class="grid grid-cols-3">
+    <!-- Critical Equipment Card -->
+    <div class="card" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+        <div style="text-align: center;">
+            <div style="color: var(--danger); font-weight: 600; margin-bottom: 0.5rem;">Critical Equipment</div>
+            <div style="font-size: 2.5rem; font-weight: 700; color: var(--danger);">{{ critical_count }} Units</div>
+            <div style="color: var(--danger); font-size: 0.875rem;">(Health < 30%)</div>
+            </div>
+        </div>
+
+        <!-- Technician Load Card -->
+        <div class="card" style="background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
+            <div style="text-align: center;">
+                <div style="color: #60a5fa; font-weight: 600; margin-bottom: 0.5rem;">Technician Load</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: #60a5fa;">{{ tech_utilization }}% Utilized</div>
+                <div style="color: #60a5fa; font-size: 0.875rem;">(Assign Carefully)</div>
+            </div>
+        </div>
+
+        <!-- Open Requests Card -->
+        <div class="card" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+            <div style="text-align: center;">
+                <div style="color: var(--success); font-weight: 600; margin-bottom: 0.5rem;">Open Requests</div>
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--success);">{{ pending_count }} Pending
+                </div>
+                <div style="color: var(--success); font-weight: 600;">{{ overdue_count }} Overdue</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Table -->
+    <div style="margin-top: 2rem;">
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Assigned To</th>
+                        <th>Category</th>
+                        <th>Stage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in recent_activity %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500;">{{ req.subject }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">{{ req.equipment.name }}
+                            </div>
+                        </td>
+                        <td>{{ req.updated_at|date:"M d, H:i" }}</td>
+                        <td>
+                            {% if req.assigned_to %}
+                            {{ req.assigned_to }}
+                            {% else %}
+                            <span style="color: var(--text-secondary);">Unassigned</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ req.equipment.category }}</td>
+                        <td>
+                            <span class="badge 
+                            {% if req.stage == 'New' %}badge-new
+                            {% elif req.stage == 'In Progress' %}badge-progress
+                            {% elif req.stage == 'Repaired' %}badge-repaired
+                            {% else %}badge-scrap{% endif %}">
+                                {{ req.stage }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-secondary);">No recent activity.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endblock %}
