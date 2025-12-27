@@ -1,6 +1,8 @@
-# GearGuard
+# 🛠️ GearGuard – The Ultimate Maintenance Tracker
 
-A premium maintenance management system built with Django, featuring robust authentication and an intelligent dashboard for tracking equipment health and maintenance operations.
+A smart maintenance management system built with Django for the **Odoo Hackathon**. GearGuard helps organizations efficiently track assets and manage maintenance operations by providing a centralized platform that seamlessly connects Equipment, Maintenance Teams, and Service Requests.
+
+The core goal is to improve asset reliability, reduce downtime, and give maintenance teams a clear, actionable view of their tasks.
 
 ## Team
 
@@ -8,41 +10,116 @@ A premium maintenance management system built with Django, featuring robust auth
 - **Team Member**: Mahipal Chauhan - [@mahipal79](https://github.com/mahipal79)
 - **Team Member**: Ravi Vyas - [@coderavi1612](https://github.com/coderavi1612)
 
-## Features
+## 🚀 Key Features & Modules
 
-### 1. Authentication System
-- **Login/Signup**: Secure access with dedicated authentication pages
-- **User Accounts**: Separate accounts for technicians and managers
-- **Password Validation**: Strict requirements (uppercase, lowercase, symbols, digits)
-- **Dark UI**: Consistent premium theme across all auth pages
+### 🔧 Equipment Management
+Centralized database of all company assets (machines, vehicles, IT equipment).
 
-### 2. Intelligent Dashboard (V2)
-- **Critical Equipment Tracking**: Real-time monitoring of assets with health < 30%
-- **Technician Load Visualization**: Team utilization metrics and insights
-- **Activity Feed**: Quick view of recent maintenance actions and updates
+**Capabilities:**
+- Track equipment by department or assigned employee
+- Store essential details:
+  - Equipment name & serial number
+  - Purchase date & warranty information
+  - Physical location
+  - Health status monitoring
+- Assign default maintenance team and responsible technician
+- Quick access to maintenance history via smart actions
+- Advanced search and filtering by name or serial number
 
-### 3. Work Centers & Categories (V2)
+### 👷 Maintenance Teams
+Support for multiple specialized maintenance teams reflecting real-world operations.
+
+**Features:**
+- Create teams (Mechanics, Electricians, IT Support, etc.)
+- Assign technicians to specific teams
+- Team-based request routing and access control
+- Technician load visualization and utilization metrics
+
+### 📝 Maintenance Requests
+Core transactional module managing the full lifecycle of maintenance jobs.
+
+**Request Types:**
+- **Corrective Maintenance**: Unplanned repairs due to breakdowns
+- **Preventive Maintenance**: Scheduled routine checkups
+
+**Key Fields:**
+- Issue subject (e.g., "Leaking Oil")
+- Linked equipment or work center
+- Scheduled date (for preventive tasks)
+- Repair duration / hours spent
+- Threaded comments and maintenance logs
+
+### 🔄 Functional Workflows
+
+**Flow 1: Breakdown Handling**
+1. User creates a maintenance request
+2. Selecting equipment auto-fills category and assigned team
+3. Request starts in **New** status
+4. Technician/manager assigns the request → **In Progress**
+5. On completion, log duration and mark **Repaired**
+
+**Flow 2: Preventive Maintenance**
+1. Manager creates a preventive request
+2. Schedule for specific date
+3. Request appears in Calendar View
+4. Helps teams prepare and avoid unexpected breakdowns
+
+### 📊 User Interface & Views
+
+**🗂️ Kanban Board**
+- Primary workspace for technicians
+- Stages: **New | In Progress | Repaired | Scrap**
+- Drag-and-drop support for status updates
+- Visual indicators:
+  - Assigned technician avatars
+  - Overdue requests highlighted with warning colors
+
+**📅 Calendar View**
+- Displays all preventive maintenance tasks
+- Click on dates to quickly schedule new maintenance
+- Improves planning and workload visibility
+
+**📈 Intelligent Dashboard (V2)**
+- Critical equipment tracking (health < 30%)
+- Activity feed with recent maintenance actions
+- Real-time team utilization metrics
+
+### 🏭 Work Centers & Categories (V2)
 - **Work Centers**: Manage production units with cost/hour, efficiency, and OEE metrics
-- **Categories**: Organize assets (e.g., Robotics, Hydraulics) with assigned responsible users
-- **Dynamic Requests**: Create maintenance requests for Equipment or Work Centers
-- **Maintenance Logs**: Threaded comments and updates on every request
+- **Categories**: Organize assets (Robotics, Hydraulics, etc.) with responsible users
+- **Dynamic Requests**: Toggle between Equipment and Work Center targets
 
-### 4. Equipment Management
-- **Central Database**: Track all assets by department, owner, and assigned team
-- **Smart Logic**: Auto-assigns teams based on equipment definitions
-- **Advanced Search**: Filter equipment by name or serial number
-- **Health Monitoring**: Track equipment condition and maintenance history
+### 🤖 Smart Automation & Advanced Features
 
-### 5. Maintenance Requests (Kanban Board)
-- **Visual Workflow**: Drag and drop requests between stages:
-  - New → In Progress → Repaired → Scrap
-- **Auto-Save**: Status updates persist automatically
-- **Scrap Logic**: Moving requests to "Scrap" automatically marks equipment as unusable
+**Smart Buttons**
+- "Maintenance" button on equipment pages
+- Shows all related maintenance requests
+- Badge count of open requests
 
-### 6. Preventive Maintenance (Calendar)
-- **Monthly Schedule**: View and manage preventive maintenance tasks
-- **Interactive Calendar**: Click on dates to schedule new maintenance checks
-- **Task Integration**: Seamlessly integrated with equipment and work center data
+**Scrap Logic**
+- Moving a request to **Scrap** automatically marks equipment as unusable
+- Maintains accurate asset lifecycle records
+
+**Auto-Fill Intelligence**
+- Equipment selection auto-populates category and team
+- Smart team assignment based on equipment definitions
+
+### 🔐 Authentication System
+- Secure login/signup with dedicated pages
+- Separate accounts for technicians and managers
+- Strict password validation (uppercase, lowercase, symbols, digits)
+- Dark premium UI theme
+
+## 🎯 Why GearGuard?
+
+GearGuard goes beyond basic CRUD operations. With intelligent auto-fill logic, visual workflows, and real-world maintenance processes, it delivers an **Odoo-like experience** while remaining flexible and easy to extend.
+
+**Key Differentiators:**
+- Smart automation reduces manual data entry
+- Visual Kanban workflow mirrors real maintenance operations
+- Preventive maintenance calendar prevents unexpected breakdowns
+- Team-based access control and workload management
+- Comprehensive audit trail with maintenance logs
 
 ## Installation & Setup
 
@@ -128,12 +205,25 @@ The system has been rigorously tested against V2 specifications:
 
 ## Usage
 
-1. **Login** to the system with your credentials
-2. **Dashboard** provides an overview of critical equipment and team load
-3. **Equipment Management** to add and track assets
-4. **Kanban Board** for visual maintenance workflow management
-5. **Calendar** for scheduling preventive maintenance
-6. **Work Centers** to manage production units and efficiency metrics
+### For Technicians
+1. **Login** with your credentials
+2. **Kanban Board** shows your assigned maintenance requests
+3. **Drag and drop** requests through workflow stages
+4. **Log hours** and add comments on completed work
+5. **Calendar** view for scheduled preventive maintenance
+
+### For Managers
+1. **Dashboard** provides overview of critical equipment and team load
+2. **Create requests** for corrective or preventive maintenance
+3. **Assign tasks** to appropriate teams and technicians
+4. **Monitor progress** via Kanban board and activity feed
+5. **Manage work centers** and equipment categories
+
+### Core Workflows
+- **Equipment Management**: Add and track assets with full maintenance history
+- **Breakdown Handling**: Quick request creation with auto-filled team assignment
+- **Preventive Scheduling**: Calendar-based planning to avoid downtime
+- **Scrap Management**: Automatic equipment lifecycle tracking
 
 ## Contributing
 
